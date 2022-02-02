@@ -16,7 +16,6 @@ const CREATEDIC = "dictionary/CREATEDIC";
 const EDITDIC = "dictionary/EDITDIC";
 const DELETEDIC = "dictionary/DELETEDIC";
 const LIKEIT = "dictionary/LIKEIT";
-const TARGETDIC = "dictionary/TARGETDIC";
 
 const initialState = {
   list: [],
@@ -41,10 +40,6 @@ export function deleteDic(dic_idx) {
 export function likeIt(dic_idx) {
   return { type: LIKEIT, dic_idx };
 }
-export function getTargetDic(dic_id) {
-  return { type: TARGETDIC, dic_id };
-}
-
 // ======================= middlewares =======================
 // ======================= middlewares =======================
 // firestore와 통신
@@ -66,9 +61,9 @@ export const loadDicFB = () => {
 //사전 추가하기
 export const createDicFB = (dictionary) => {
   return async function (dispatch) {
-    await addDoc(collection(db, "dictionary"), dictionary);
+    const docRef = await addDoc(collection(db, "dictionary"), dictionary);
 
-    const dictionary_data = { id: dictionary.id, ...dictionary };
+    const dictionary_data = { id: docRef.id, ...dictionary };
     dispatch(createDic(dictionary_data));
   };
 };
@@ -122,27 +117,6 @@ export const likeItDicFB = (dic_list) => {
   };
 };
 
-// export const targetDicFB = (dic_id) => {
-//   return async function (dispatch, getState) {
-//     const _dictionary_list = getState().dictionaryList.list;
-//     const dictionary_list = _dictionary_list.filter((v) => {
-//       return v.id === dic_id;
-//     });
-//     console.log(dictionary_list[0].id);
-//     await addDoc(collection(db, "targetDic"), { dictionary_list });
-//     dispatch(getTargetDic(dictionary_list[0].id));
-//   };
-// };
-export const targetDicFB = (dic_id) => {
-  return async function (dispatch, getState) {
-    const _dictionary_list = getState().dictionaryList.list;
-    const dictionary_list = _dictionary_list.filter((v) => {
-      return v.id === dic_id;
-    });
-    await addDoc(collection(db, "targetDic"), { dictionary_list });
-    dispatch(getTargetDic(dictionary_list[0].id));
-  };
-};
 // ======================= redux =======================
 // ======================= redux =======================
 
@@ -182,13 +156,6 @@ export default function reducer(state = initialState, action = {}) {
         }
       });
       return { ...state, list: likeTarget };
-    }
-    case "dictionary/TARGETDIC": {
-      const targetDic = state.list.filter((v) => {
-        return v.id === action.dic_id ? v : null;
-      });
-      console.log(targetDic);
-      return { ...state, target_dic: targetDic };
     }
     default:
       return state;

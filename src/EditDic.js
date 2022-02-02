@@ -1,51 +1,29 @@
 import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  editDicFB,
-  targetDicFB,
-  targetDic,
-} from "./redux/modules/dictionaryList";
-import { db } from "./firebase";
-import {
-  addDoc,
-  doc,
-  collection,
-  getDoc,
-  getDocs,
-  deleteDoc,
-  updateDoc,
-} from "firebase/firestore";
+import { editDicFB } from "./redux/modules/dictionaryList";
 import { Form, Input, Button } from "antd";
 import { InputWrap } from "./CreateDic";
 
 const EditDic = (props) => {
+  const [Inputs, setInputs] = React.useState({});
   const navigate = useNavigate();
   const params = useParams();
   const uploadDic = useDispatch();
   const dicList = useSelector((state) => state.dictionaryList.list);
-  const targetDic = useSelector((state) => state.dictionaryList.target_dic);
 
   const editDicList = dicList.filter((v) => {
+    let target = "";
     if (v.id === params.index) {
-      return v;
+      target = [v];
     }
+    return target;
   })[0];
-  const [Inputs, setInputs] = React.useState({
-    id: editDicList.id ? editDicList.id : "",
-    title: editDicList.title ? editDicList.title : "",
-    pronounce: editDicList.pronounce ? editDicList.pronounce : "",
-    meaning: editDicList.meaning ? editDicList.meaning : "",
-    example: editDicList.example ? editDicList.example : "",
-    translate: editDicList.translate ? editDicList.translate : "",
-    like_it: editDicList.like_it ? editDicList.like_it : "",
-  });
-  const { title, pronounce, meaning, example, translate } = Inputs;
 
   const onChange = (e) => {
     const { name, value } = e.target;
     setInputs({
-      ...Inputs,
+      ...editDicList,
       [name]: value,
     });
   };
@@ -57,7 +35,10 @@ const EditDic = (props) => {
           label="단어"
           rules={[{ required: true }]}
           onChange={onChange}>
-          <Input name="title" defaultValue={Input.title} />
+          <Input
+            name="title"
+            defaultValue={editDicList ? editDicList.title : ""}
+          />
         </Form.Item>
         <Form.Item
           label=" 발음"
@@ -65,7 +46,7 @@ const EditDic = (props) => {
           onChange={onChange}>
           <Input
             name="pronounce"
-            defaultValue={editDicList.pronounce ? editDicList.pronounce : ""}
+            defaultValue={editDicList ? editDicList.pronounce : ""}
           />
         </Form.Item>
         <Form.Item
@@ -74,7 +55,7 @@ const EditDic = (props) => {
           onChange={onChange}>
           <Input
             name="meaning"
-            defaultValue={editDicList.meaning ? editDicList.meaning : ""}
+            defaultValue={editDicList ? editDicList.meaning : ""}
           />
         </Form.Item>
         <Form.Item
@@ -83,7 +64,7 @@ const EditDic = (props) => {
           onChange={onChange}>
           <Input
             name="example"
-            defaultValue={editDicList.example ? editDicList.example : ""}
+            defaultValue={editDicList ? editDicList.example : ""}
           />
         </Form.Item>
         <Form.Item
@@ -92,7 +73,7 @@ const EditDic = (props) => {
           onChange={onChange}>
           <Input
             name="translate"
-            defaultValue={editDicList.translate ? editDicList.translate : ""}
+            defaultValue={editDicList ? editDicList.translate : ""}
           />
         </Form.Item>
         <Button

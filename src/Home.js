@@ -82,7 +82,6 @@ const Home = (props) => {
             }}
           />
         </CreateDivButton>
-        <button>click</button>
       </form>
     </>
   );
