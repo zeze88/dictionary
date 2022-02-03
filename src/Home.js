@@ -1,12 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  likeItDicFB,
-  deleteDicFB,
-  getTargetDic,
-  targetDicFB,
-} from "./redux/modules/dictionaryList";
+import { likeItDicFB, deleteDicFB } from "./redux/modules/dictionaryList";
 
 import styled from "styled-components";
 
@@ -22,55 +17,55 @@ const Home = (props) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const dicInfo = useSelector((state) => state.dictionaryList.list);
-  const targetDic = useSelector((state) => state.dictionaryList);
-
   return (
     <>
       <form>
         <Row gutter={16}>
-          {dicInfo.map((list, idx) => {
-            return (
-              <Col className="gutter-row" span={6} key={idx}>
-                <DicCardWrap isLikeIt={list.like_it}>
-                  <Card
-                    style={{ marginTop: 16 }}
-                    title={list.title}
-                    actions={[
-                      <Space>
-                        <CheckCircleOutlined
-                          key="check"
+          {dicInfo
+            .sort((a, b) => b.createTime - a.createTime)
+            .map((list, idx) => {
+              return (
+                <Col className="gutter-row" span={6} key={idx}>
+                  <DicCardWrap isLikeIt={list.like_it}>
+                    <Card
+                      style={{ marginTop: 16 }}
+                      title={list.title}
+                      actions={[
+                        <Space>
+                          <CheckCircleOutlined
+                            key="check"
+                            onClick={() => {
+                              dispatch(likeItDicFB(list));
+                            }}
+                            style={list.like_it ? { color: "red" } : {}}
+                          />
+                        </Space>,
+                        <EditOutlined
+                          key="edit"
                           onClick={() => {
-                            dispatch(likeItDicFB(list));
+                            // dispatch(targetDicFB(list.id));
+                            navigate(`/edit/${list.id}`);
                           }}
-                          style={list.like_it ? { color: "red" } : {}}
-                        />
-                      </Space>,
-                      <EditOutlined
-                        key="edit"
-                        onClick={() => {
-                          // dispatch(targetDicFB(list.id));
-                          navigate(`/edit/${list.id}`);
-                        }}
-                      />,
-                      <DeleteOutlined
-                        key="delete"
-                        style={{ color: "red" }}
-                        onClick={() => {
-                          dispatch(deleteDicFB(list.id));
-                        }}
-                      />,
-                    ]}>
-                    <Cardwrap>
-                      <span>{list.pronounce}</span>
-                      <p>{list.meaning}</p>
-                      <div>{list.example}</div>
-                      <div>{list.translate}</div>
-                    </Cardwrap>
-                  </Card>
-                </DicCardWrap>
-              </Col>
-            );
-          })}
+                        />,
+                        <DeleteOutlined
+                          key="delete"
+                          style={{ color: "red" }}
+                          onClick={() => {
+                            dispatch(deleteDicFB(list.id));
+                          }}
+                        />,
+                      ]}>
+                      <Cardwrap>
+                        <span>{list.pronounce}</span>
+                        <p>{list.meaning}</p>
+                        <div>{list.example}</div>
+                        <div>{list.translate}</div>
+                      </Cardwrap>
+                    </Card>
+                  </DicCardWrap>
+                </Col>
+              );
+            })}
         </Row>
         <CreateDivButton>
           <Button
@@ -88,11 +83,15 @@ const Home = (props) => {
 };
 const DicCardWrap = styled.div`
   word-break: break-all;
+  .ant-card-body {
+    max-height: 150px;
+    overflow: auto;
+  }
   .ant-card-actions {
     border-radius: 4px;
 
     li span {
-      transition: all 0.3s;
+      transition: all 0.2s;
 
       &:hover {
         transform: scale(1.1);
@@ -104,7 +103,7 @@ const DicCardWrap = styled.div`
     isLikeIt &&
     `
     .ant-card-bordered {
-      transition:all .3s;
+      transition:all .2s;
       border: 1px solid #4c8bff;
       border-radius: 4px;
       box-shadow:0 0 10px 0px #d5d5d5;
