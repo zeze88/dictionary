@@ -19,7 +19,6 @@ const LIKEIT = "dictionary/LIKEIT";
 
 const initialState = {
   list: [],
-  target_dic: {},
 };
 
 // ======================= action Creator =======================
@@ -52,7 +51,6 @@ export const loadDicFB = () => {
     dictionary_data.forEach((d) => {
       dic_list.push({ id: d.id, ...d.data() });
     });
-    console.log(dic_list);
 
     dispatch(loadDictionary(dic_list));
   };
@@ -114,6 +112,8 @@ export const likeItDicFB = (dic_list) => {
       return v.id === dic_list.id;
     });
     await updateDoc(docRef, { like_it: !isLikeIt });
+
+    dispatch(likeIt(dictionary_list));
   };
 };
 
@@ -155,6 +155,7 @@ export default function reducer(state = initialState, action = {}) {
           return { ...v };
         }
       });
+
       return { ...state, list: likeTarget };
     }
     default:
