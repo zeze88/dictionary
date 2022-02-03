@@ -87,6 +87,7 @@ const Home = (props) => {
   );
 };
 const DicCardWrap = styled.div`
+  word-break: break-all;
   .ant-card-actions {
     border-radius: 4px;
 
