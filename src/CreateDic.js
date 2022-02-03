@@ -16,11 +16,10 @@ const CreateDic = (props) => {
     meaning: "",
     example: "",
     translate: "",
+    createTime: new Date().getTime(),
     like_it: false,
   });
-
   const { title, pronounce, meaning, example, translate } = Inputs;
-
   const onChange = (e) => {
     const { name, value } = e.target;
     setInputs({
